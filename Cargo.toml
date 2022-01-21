@@ -1,9 +1,9 @@
 [package]
 authors = ["cyqsimon <28627918+cyqsimon@users.noreply.github.com>"]
-description = "A solver for the math puzzles on the countdown game show."
+description = "A solver for the numbers game on the countdown game show."
 edition = "2021"
-keywords = ["countdown", "solver"]
-name = "countdown-math-solver"
+keywords = ["countdown", "numbers", "solver"]
+name = "countdown-numbers-solver"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
