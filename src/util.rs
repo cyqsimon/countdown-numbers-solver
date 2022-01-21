@@ -1,3 +1,5 @@
+use std::fmt;
+
 use itertools::Itertools;
 use strum::EnumIter;
 
@@ -12,7 +14,7 @@ pub enum Op {
     Div,
 }
 
-impl std::fmt::Display for Op {
+impl fmt::Display for Op {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let repr = match self {
             Op::Add => "+",
@@ -33,7 +35,7 @@ pub enum Token {
     Op(Op),
 }
 
-impl std::fmt::Display for Token {
+impl fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let repr = match self {
             Token::Num(n) => n.to_string(),
