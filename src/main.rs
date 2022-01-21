@@ -24,7 +24,7 @@ struct CliArgs {
     postfix: bool,
 
     /// The list of numbers to work with, delimited by commas
-    #[clap(required = true, value_delimiter = ',', require_delimiter = true)]
+    #[clap(required = true, value_delimiter = ',', multiple_occurrences = false)]
     numbers: Vec<u32>,
 
     /// The target number
