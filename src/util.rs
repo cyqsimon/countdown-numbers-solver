@@ -66,18 +66,37 @@ pub fn postfix_print(seq: &PostfixSequence) -> String {
 /// Returns None if the sequence does not produce a valid expression.
 pub fn infix_print(seq: &PostfixSequence) -> Option<String> {
     /// Expression precedence.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     enum ExpPrecedence {
-        // discriminants are arbitrary; only ordering is important
-        AddSub = 10,
-        MulDiv = 20,
-        Number = 30,
+        Add,
+        Sub,
+        Mul,
+        Div,
+        Number,
+    }
+    impl PartialOrd for ExpPrecedence {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.cmp(other))
+        }
+    }
+    impl Ord for ExpPrecedence {
+        fn cmp(&self, other: &Self) -> Ordering {
+            use ExpPrecedence::*;
+            use Ordering::*;
+            match (self, other) {
+                (Add | Sub, Add | Sub) | (Mul | Div, Mul | Div) | (Number, Number) => Equal,
+                (Add | Sub, Mul | Div) | (_, Number) => Less,
+                (Mul | Div, Add | Sub) | (Number, _) => Greater,
+            }
+        }
     }
     impl From<Op> for ExpPrecedence {
         fn from(op: Op) -> Self {
             match op {
-                Op::Add | Op::Sub => ExpPrecedence::AddSub,
-                Op::Mul | Op::Div => ExpPrecedence::MulDiv,
+                Op::Add => ExpPrecedence::Add,
+                Op::Sub => ExpPrecedence::Sub,
+                Op::Mul => ExpPrecedence::Mul,
+                Op::Div => ExpPrecedence::Div,
             }
         }
     }
@@ -99,7 +118,15 @@ pub fn infix_print(seq: &PostfixSequence) -> Option<String> {
                 };
                 let repr_r = match prd_r.cmp(&prd_op) {
                     Ordering::Less => format!("({})", exp_r),
-                    Ordering::Equal | Ordering::Greater => exp_r,
+                    Ordering::Equal => {
+                        // sub & div do not have associative property and need parentheses on RHS
+                        // e.g. 64/(4/2) != 64/4/2
+                        match prd_r {
+                            ExpPrecedence::Sub | ExpPrecedence::Div => format!("({})", exp_r),
+                            _ => exp_r,
+                        }
+                    }
+                    Ordering::Greater => exp_r,
                 };
                 let repr_exp = format!("{}{}{}", repr_l, op, repr_r);
 
