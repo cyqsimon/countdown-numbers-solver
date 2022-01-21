@@ -1,5 +1,6 @@
 use strum::EnumIter;
 
+/// A single operation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum Op {
     Add,
@@ -8,6 +9,9 @@ pub enum Op {
     Div,
 }
 
+/// An atomic unit in a postfix-order expression.
+///
+/// Either a positive integer or an operation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Token {
     Num(u32),
