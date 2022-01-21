@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{cmp::Ordering, fmt};
 
 use itertools::Itertools;
 use strum::EnumIter;
@@ -65,21 +65,55 @@ pub fn postfix_print(seq: &PostfixSequence) -> String {
 ///
 /// Returns None if the sequence does not produce a valid expression.
 pub fn infix_print(seq: &PostfixSequence) -> Option<String> {
+    /// Expression precedence.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+    enum ExpPrecedence {
+        // discriminants are arbitrary; only ordering is important
+        AddSub = 10,
+        MulDiv = 20,
+        Number = 30,
+    }
+    impl From<Op> for ExpPrecedence {
+        fn from(op: Op) -> Self {
+            match op {
+                Op::Add | Op::Sub => ExpPrecedence::AddSub,
+                Op::Mul | Op::Div => ExpPrecedence::MulDiv,
+            }
+        }
+    }
+
     let mut stack = vec![];
     for token in seq.iter() {
         match token {
-            Token::Num(n) => stack.push(n.to_string()),
+            Token::Num(n) => stack.push((n.to_string(), ExpPrecedence::Number)),
             Token::Op(op) => {
-                let n1 = stack.pop()?;
-                let n0 = stack.pop()?;
-                let repr = format!("({}{}{})", n0, op, n1);
-                stack.push(repr);
+                let (exp_r, prd_r) = stack.pop()?;
+                let (exp_l, prd_l) = stack.pop()?;
+                let prd_op = (*op).into();
+
+                // if expression precedence < current operation precedence
+                // then format with parentheses
+                let repr_l = match prd_l.cmp(&prd_op) {
+                    Ordering::Less => format!("({})", exp_l),
+                    Ordering::Equal | Ordering::Greater => exp_l,
+                };
+                let repr_r = match prd_r.cmp(&prd_op) {
+                    Ordering::Less => format!("({})", exp_r),
+                    Ordering::Equal | Ordering::Greater => exp_r,
+                };
+                let repr_exp = format!("{}{}{}", repr_l, op, repr_r);
+
+                // new expression precedence is the current operation precedence
+                stack.push((repr_exp, prd_op));
             }
         };
     }
-    if stack.len() != 1 {
-        return None;
-    }
 
-    stack.pop()
+    // the sequence is only valid if there is exactly one value
+    // on the stack at this point
+    if stack.len() == 1 {
+        stack.pop().map(|(exp, _)| exp)
+    } else {
+        None
+    }
 }
