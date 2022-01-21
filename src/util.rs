@@ -54,14 +54,30 @@ impl From<Op> for Token {
     }
 }
 
-/// Convert a postfix sequence to a postfix string suitable for
-/// display printing.
+/// Convert a postfix sequence to a postfix string suitable for display printing.
 pub fn postfix_print(seq: &PostfixSequence) -> String {
     seq.iter().map(Token::to_string).join(",")
 }
 
-/// Convert a postfix sequence to a infix string suitable for
-/// display printing.
-pub fn infix_print(seq: &PostfixSequence) -> String {
-    unimplemented!("Please use `--postfix` flag for now.")
+/// Convert a postfix sequence to a infix string suitable for display printing.
+///
+/// Returns None if the sequence does not produce a valid expression.
+pub fn infix_print(seq: &PostfixSequence) -> Option<String> {
+    let mut stack = vec![];
+    for token in seq.iter() {
+        match token {
+            Token::Num(n) => stack.push(n.to_string()),
+            Token::Op(op) => {
+                let n1 = stack.pop()?;
+                let n0 = stack.pop()?;
+                let repr = format!("({}{}{})", n0, op, n1);
+                stack.push(repr);
+            }
+        };
+    }
+    if stack.len() != 1 {
+        return None;
+    }
+
+    stack.pop()
 }

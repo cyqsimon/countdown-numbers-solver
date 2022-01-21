@@ -54,7 +54,7 @@ fn main() {
                         if postfix {
                             postfix_print(&solution)
                         } else {
-                            infix_print(&solution)
+                            infix_print(&solution).unwrap() // solution is always valid
                         }
                     )
                 });
@@ -68,7 +68,7 @@ fn main() {
                 if postfix {
                     postfix_print(&solution)
                 } else {
-                    infix_print(&solution)
+                    infix_print(&solution).unwrap() // solution is always valid
                 }
             ),
             None => println!("No solution found"),
