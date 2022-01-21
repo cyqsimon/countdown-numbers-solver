@@ -96,7 +96,7 @@ pub fn postfix_print(seq: &PostfixSequence) -> String {
     seq.iter().map(Token::to_string).join(",")
 }
 
-/// Convert a postfix sequence to a infix string suitable for display printing.
+/// Convert a postfix sequence to an infix string suitable for display printing.
 ///
 /// Returns None if the sequence does not produce a valid expression.
 pub fn infix_print(seq: &PostfixSequence) -> Option<String> {

@@ -69,7 +69,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
             let operand0 = stack.pop().unwrap(); // at least 2 in stack
             match op {
                 Op::Add => {
-                    // use ordering to eliminate commutative duplication
+                    // use ordering to eliminate some commutative duplications
                     if operand0 < operand1 {
                         None
                     } else {
@@ -88,7 +88,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
                 }
                 Op::Mul => {
                     // multiply by 1 is not helpful
-                    // use ordering to eliminate commutative duplication
+                    // use ordering to eliminate some commutative duplications
                     if operand0 == 1 || operand1 == 1 || operand0 < operand1 {
                         None
                     } else {
@@ -114,7 +114,11 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
 ///
 /// Optionally filter out trivially-different solutions
 /// with the `dumb` flag.
-pub fn calc_postfix_sequences_all(numbers: &[u32], target: u32, dumb: bool) -> HashSet<PostfixSequence> {
+pub fn calc_postfix_sequences_all(
+    numbers: &[u32],
+    target: u32,
+    dumb: bool,
+) -> HashSet<PostfixSequence> {
     calc_postfix_sequences_all_recurse(numbers, target, dumb, vec![], vec![])
 }
 
@@ -187,7 +191,11 @@ fn calc_postfix_sequences_all_recurse(
 ///
 /// Optionally filter out trivially-different solutions
 /// with the `dumb` flag.
-pub fn calc_postfix_sequences_first(numbers: &[u32], target: u32, dumb: bool) -> Option<PostfixSequence> {
+pub fn calc_postfix_sequences_first(
+    numbers: &[u32],
+    target: u32,
+    dumb: bool,
+) -> Option<PostfixSequence> {
     calc_postfix_sequences_first_recurse(numbers, target, dumb, vec![], vec![])
 }
 
