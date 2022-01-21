@@ -12,6 +12,18 @@ pub enum Op {
     Div,
 }
 
+impl std::fmt::Display for Op {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let repr = match self {
+            Op::Add => "+",
+            Op::Sub => "-",
+            Op::Mul => "*",
+            Op::Div => "/",
+        };
+        write!(f, "{}", repr)
+    }
+}
+
 /// An atomic unit in a postfix-order expression.
 ///
 /// Either a positive integer or an operation.
@@ -19,6 +31,16 @@ pub enum Op {
 pub enum Token {
     Num(u32),
     Op(Op),
+}
+
+impl std::fmt::Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let repr = match self {
+            Token::Num(n) => n.to_string(),
+            Token::Op(op) => op.to_string(),
+        };
+        write!(f, "{}", repr)
+    }
 }
 
 impl From<u32> for Token {
@@ -35,13 +57,6 @@ impl From<Op> for Token {
 /// Convert a postfix sequence to a postfix string suitable for
 /// display printing.
 pub fn postfix_print(seq: &PostfixSequence) -> String {
-    seq.iter()
-        .map(|token| match token {
-            Token::Num(n) => n.to_string(),
-            Token::Op(Op::Add) => "+".into(),
-            Token::Op(Op::Sub) => "-".into(),
-            Token::Op(Op::Mul) => "*".into(),
-            Token::Op(Op::Div) => "/".into(),
-        })
-        .join(",")
+    seq.iter().map(Token::to_string).join(",")
+}
 }
