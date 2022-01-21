@@ -15,10 +15,9 @@ fn try_apply_legal(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
             stack.push(n);
             Some(stack)
         }
-        Token::Op(_) if stack.len() < 2 => None,
         Token::Op(op) => {
-            let operand1 = stack.pop().unwrap();
-            let operand0 = stack.pop().unwrap(); // at least 2 in stack
+            let operand1 = stack.pop()?;
+            let operand0 = stack.pop()?;
             match op {
                 Op::Add => {
                     stack.push(operand0 + operand1);
@@ -63,10 +62,9 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
                 Some(stack)
             }
         }
-        Token::Op(_) if stack.len() < 2 => None,
         Token::Op(op) => {
-            let operand1 = stack.pop().unwrap();
-            let operand0 = stack.pop().unwrap(); // at least 2 in stack
+            let operand1 = stack.pop()?;
+            let operand0 = stack.pop()?;
             match op {
                 Op::Add => {
                     // use ordering to eliminate some commutative duplications
