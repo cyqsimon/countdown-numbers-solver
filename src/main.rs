@@ -1,4 +1,5 @@
 mod compute;
+mod util;
 
 use clap::Parser;
 
