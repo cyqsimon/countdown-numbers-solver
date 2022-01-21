@@ -4,6 +4,8 @@ use strum::IntoEnumIterator;
 
 use crate::util::{Op, Token};
 
+pub type PostfixSequence = Vec<Token>;
+
 /// Try to apply a token on the postfix stack.
 /// This will either push a number or apply an operation.
 /// Returns the updated stack unless operation is illegal.
@@ -112,7 +114,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
 ///
 /// Optionally filter out trivially-different solutions
 /// with the `dumb` flag.
-pub fn calc_postfix_sequences_all(numbers: &[u32], target: u32, dumb: bool) -> HashSet<Vec<Token>> {
+pub fn calc_postfix_sequences_all(numbers: &[u32], target: u32, dumb: bool) -> HashSet<PostfixSequence> {
     calc_postfix_sequences_all_recurse(numbers, target, dumb, vec![], vec![])
 }
 
@@ -122,8 +124,8 @@ fn calc_postfix_sequences_all_recurse(
     target: u32,
     dumb: bool,
     stack: Vec<u32>,
-    history: Vec<Token>,
-) -> HashSet<Vec<Token>> {
+    history: PostfixSequence,
+) -> HashSet<PostfixSequence> {
     // if target reached, then add current history to output
     let mut self_outputs = HashSet::new();
     if stack.len() == 1 && stack[0] == target {
@@ -185,7 +187,7 @@ fn calc_postfix_sequences_all_recurse(
 ///
 /// Optionally filter out trivially-different solutions
 /// with the `dumb` flag.
-pub fn calc_postfix_sequences_first(numbers: &[u32], target: u32, dumb: bool) -> Option<Vec<Token>> {
+pub fn calc_postfix_sequences_first(numbers: &[u32], target: u32, dumb: bool) -> Option<PostfixSequence> {
     calc_postfix_sequences_first_recurse(numbers, target, dumb, vec![], vec![])
 }
 
@@ -195,8 +197,8 @@ fn calc_postfix_sequences_first_recurse(
     target: u32,
     dumb: bool,
     stack: Vec<u32>,
-    history: Vec<Token>,
-) -> Option<Vec<Token>> {
+    history: PostfixSequence,
+) -> Option<PostfixSequence> {
     // if target reached, return current history
     if stack.len() == 1 && stack[0] == target {
         return Some(history);
