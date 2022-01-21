@@ -39,8 +39,11 @@ fn main() {
         numbers,
         target,
     } = CliArgs::parse();
-    println!("  Numbers: {:?}, Target: {}", numbers, target);
-    println!("  Find all: {}, Dumb: {}", find_all, dumb);
+    println!("Numbers: {:?}, Target: {}", numbers, target);
+    println!(
+        "  Find all: {}, Dumb: {}, Postfix: {}",
+        find_all, dumb, postfix
+    );
 
     if find_all {
         let solutions = calc_postfix_sequences_all(&numbers, target, dumb);
