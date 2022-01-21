@@ -9,5 +9,5 @@ cargo run --release -- 50,75,100,25,2,1 940
 
 For full usage, run:
 ```sh
-cargo rr --relaese -- -h
+cargo run --release -- -h
 ```
