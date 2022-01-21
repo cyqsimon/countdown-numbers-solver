@@ -1,4 +1,7 @@
+use itertools::Itertools;
 use strum::EnumIter;
+
+use crate::compute::PostfixSequence;
 
 /// A single operation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
@@ -27,4 +30,18 @@ impl From<Op> for Token {
     fn from(op: Op) -> Self {
         Token::Op(op)
     }
+}
+
+/// Convert a postfix sequence to a postfix string suitable for
+/// display printing.
+pub fn postfix_print(seq: &PostfixSequence) -> String {
+    seq.iter()
+        .map(|token| match token {
+            Token::Num(n) => n.to_string(),
+            Token::Op(Op::Add) => "+".into(),
+            Token::Op(Op::Sub) => "-".into(),
+            Token::Op(Op::Mul) => "*".into(),
+            Token::Op(Op::Div) => "/".into(),
+        })
+        .join(",")
 }

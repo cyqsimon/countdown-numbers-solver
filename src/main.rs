@@ -3,7 +3,10 @@ mod util;
 
 use clap::Parser;
 
-use crate::compute::{calc_postfix_sequences_all, calc_postfix_sequences_first};
+use crate::{
+    compute::{calc_postfix_sequences_all, calc_postfix_sequences_first},
+    util::postfix_print,
+};
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -15,6 +18,10 @@ struct CliArgs {
     /// Include trivially-different solutions (e.g. *1, /1, a+b vs. b+a, etc.)
     #[clap(short = 'd', long = "dumb")]
     dumb: bool,
+
+    /// Output the solution using postfix notation
+    #[clap(short = 'p', long = "postfix")]
+    postfix: bool,
 
     /// The list of numbers to work with, delimited by commas
     #[clap(required = true, value_delimiter = ',', require_delimiter = true)]
@@ -28,6 +35,7 @@ fn main() {
     let CliArgs {
         find_all,
         dumb,
+        postfix,
         numbers,
         target,
     } = CliArgs::parse();
@@ -40,15 +48,29 @@ fn main() {
             0 => println!("No solution found"),
             n => {
                 println!("{} solutions found", n);
-                solutions
-                    .into_iter()
-                    .for_each(|solution| println!("  - {:?}", solution));
+                solutions.into_iter().for_each(|solution| {
+                    println!(
+                        "  - {}",
+                        if postfix {
+                            postfix_print(&solution)
+                        } else {
+                            unimplemented!("Please use `--postfix` flag for now.")
+                        }
+                    )
+                });
             }
         };
     } else {
         let solution = calc_postfix_sequences_first(&numbers, target, dumb);
         match solution {
-            Some(solution) => println!("Solution found: {:?}", solution),
+            Some(solution) => println!(
+                "Solution found: {}",
+                if postfix {
+                    postfix_print(&solution)
+                } else {
+                    unimplemented!("Please use `--postfix` flag for now.")
+                }
+            ),
             None => println!("No solution found"),
         };
     }
