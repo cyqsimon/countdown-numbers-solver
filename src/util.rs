@@ -59,4 +59,9 @@ impl From<Op> for Token {
 pub fn postfix_print(seq: &PostfixSequence) -> String {
     seq.iter().map(Token::to_string).join(",")
 }
+
+/// Convert a postfix sequence to a infix string suitable for
+/// display printing.
+pub fn infix_print(seq: &PostfixSequence) -> String {
+    unimplemented!("Please use `--postfix` flag for now.")
 }

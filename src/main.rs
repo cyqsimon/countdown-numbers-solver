@@ -5,7 +5,7 @@ use clap::Parser;
 
 use crate::{
     compute::{calc_postfix_sequences_all, calc_postfix_sequences_first},
-    util::postfix_print,
+    util::{infix_print, postfix_print},
 };
 
 #[derive(Debug, Parser)]
@@ -54,7 +54,7 @@ fn main() {
                         if postfix {
                             postfix_print(&solution)
                         } else {
-                            unimplemented!("Please use `--postfix` flag for now.")
+                            infix_print(&solution)
                         }
                     )
                 });
@@ -68,7 +68,7 @@ fn main() {
                 if postfix {
                     postfix_print(&solution)
                 } else {
-                    unimplemented!("Please use `--postfix` flag for now.")
+                    infix_print(&solution)
                 }
             ),
             None => println!("No solution found"),
