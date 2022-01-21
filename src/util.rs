@@ -13,7 +13,6 @@ pub enum Op {
     Mul,
     Div,
 }
-
 impl fmt::Display for Op {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let repr = match self {
@@ -34,7 +33,6 @@ pub enum Token {
     Num(u32),
     Op(Op),
 }
-
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let repr = match self {
@@ -44,7 +42,6 @@ impl fmt::Display for Token {
         write!(f, "{}", repr)
     }
 }
-
 impl From<u32> for Token {
     fn from(n: u32) -> Self {
         Token::Num(n)
@@ -53,6 +50,44 @@ impl From<u32> for Token {
 impl From<Op> for Token {
     fn from(op: Op) -> Self {
         Token::Op(op)
+    }
+}
+
+/// Operational precedence of an expression.
+///
+/// Helps determine whether an expression needs parentheses.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ExpPrecedence {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Number,
+}
+impl PartialOrd for ExpPrecedence {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for ExpPrecedence {
+    fn cmp(&self, other: &Self) -> Ordering {
+        use ExpPrecedence::*;
+        use Ordering::*;
+        match (self, other) {
+            (Add | Sub, Add | Sub) | (Mul | Div, Mul | Div) | (Number, Number) => Equal,
+            (Add | Sub, Mul | Div) | (_, Number) => Less,
+            (Mul | Div, Add | Sub) | (Number, _) => Greater,
+        }
+    }
+}
+impl From<Op> for ExpPrecedence {
+    fn from(op: Op) -> Self {
+        match op {
+            Op::Add => ExpPrecedence::Add,
+            Op::Sub => ExpPrecedence::Sub,
+            Op::Mul => ExpPrecedence::Mul,
+            Op::Div => ExpPrecedence::Div,
+        }
     }
 }
 
@@ -65,42 +100,6 @@ pub fn postfix_print(seq: &PostfixSequence) -> String {
 ///
 /// Returns None if the sequence does not produce a valid expression.
 pub fn infix_print(seq: &PostfixSequence) -> Option<String> {
-    /// Expression precedence.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    enum ExpPrecedence {
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Number,
-    }
-    impl PartialOrd for ExpPrecedence {
-        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            Some(self.cmp(other))
-        }
-    }
-    impl Ord for ExpPrecedence {
-        fn cmp(&self, other: &Self) -> Ordering {
-            use ExpPrecedence::*;
-            use Ordering::*;
-            match (self, other) {
-                (Add | Sub, Add | Sub) | (Mul | Div, Mul | Div) | (Number, Number) => Equal,
-                (Add | Sub, Mul | Div) | (_, Number) => Less,
-                (Mul | Div, Add | Sub) | (Number, _) => Greater,
-            }
-        }
-    }
-    impl From<Op> for ExpPrecedence {
-        fn from(op: Op) -> Self {
-            match op {
-                Op::Add => ExpPrecedence::Add,
-                Op::Sub => ExpPrecedence::Sub,
-                Op::Mul => ExpPrecedence::Mul,
-                Op::Div => ExpPrecedence::Div,
-            }
-        }
-    }
-
     let mut stack = vec![];
     for token in seq.iter() {
         match token {
