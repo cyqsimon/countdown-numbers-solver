@@ -1,4 +1,5 @@
 mod compute;
+mod post_processing;
 mod util;
 
 use clap::Parser;
@@ -6,7 +7,7 @@ use itertools::Itertools;
 
 use crate::{
     compute::{calc_postfix_sequences_all, calc_postfix_sequences_first},
-    util::{infix_print, postfix_print},
+    post_processing::{infix_print, postfix_print},
 };
 
 #[derive(Debug, Parser)]

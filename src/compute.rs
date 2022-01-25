@@ -260,5 +260,3 @@ fn calc_postfix_sequences_first_recurse(
     // since there is nothing to fall through into
     operation_step_solution
 }
-
-// TODO: Associative filter
