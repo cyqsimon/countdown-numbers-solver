@@ -7,7 +7,7 @@ use itertools::Itertools;
 
 use crate::{
     compute::{calc_postfix_sequences_all, calc_postfix_sequences_first},
-    post_processing::{infix_print, postfix_print},
+    util::ExpBTree,
 };
 
 #[derive(Debug, Parser)]
@@ -55,28 +55,31 @@ fn main() {
                 println!("{} solutions found", n);
                 solutions
                     .into_iter()
-                    .map(|solution| {
+                    .map(|seq| ExpBTree::try_from(seq).unwrap()) // calculated sequence is always valid
+                    .dedup_by(|t0, t1| t0.commutative_eq(t1))
+                    .map(|tree| {
                         if postfix {
-                            postfix_print(&solution)
+                            tree.to_postfix_string()
                         } else {
-                            infix_print(&solution).unwrap() // solution is always valid
+                            tree.to_infix_string()
                         }
                     })
-                    .sorted()
+                    .sorted() // stable order
                     .for_each(|repr| println!(" - {}", repr));
             }
         };
     } else {
         let solution = calc_postfix_sequences_first(&numbers, target, dumb);
         match solution {
-            Some(solution) => println!(
-                "Solution found: {}",
-                if postfix {
-                    postfix_print(&solution)
+            Some(seq) => {
+                let tree = ExpBTree::try_from(seq).unwrap(); // calculated sequence is always valid
+                let repr = if postfix {
+                    tree.to_postfix_string()
                 } else {
-                    infix_print(&solution).unwrap() // solution is always valid
-                }
-            ),
+                    tree.to_infix_string()
+                };
+                println!("Solution found: {}", repr);
+            }
             None => println!("No solution found"),
         };
     }

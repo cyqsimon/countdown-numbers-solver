@@ -4,9 +4,7 @@ use std::collections::HashSet;
 
 use strum::IntoEnumIterator;
 
-use crate::util::{Op, Token};
-
-pub type PostfixSequence = Vec<Token>;
+use crate::util::{Op, PostfixSequence, Token};
 
 /// Try to apply a token on the postfix stack.
 /// This will either push a number or apply an operation.
@@ -69,7 +67,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
             let operand0 = stack.pop()?;
             match op {
                 Op::Add => {
-                    // use ordering to eliminate some (not all) commutative duplications
+                    // use ordering to eliminate commutative duplications
                     if operand0 < operand1 {
                         None
                     } else {
@@ -88,7 +86,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
                 }
                 Op::Mul => {
                     // multiply by 1 is not helpful
-                    // use ordering to eliminate some (not all) commutative duplications
+                    // use ordering to eliminate commutative duplications
                     if operand0 == 1 || operand1 == 1 || operand0 < operand1 {
                         None
                     } else {
