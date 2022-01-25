@@ -184,7 +184,7 @@ impl ExpBTree {
                 let (lhs_repr_raw, lhs_op) = lhs.to_infix_string_impl();
                 let lhs_repr = match lhs_op {
                     None => lhs_repr_raw,
-                    Some(lhs_op) => match op.cmp(&lhs_op) {
+                    Some(lhs_op) => match lhs_op.cmp(op) {
                         Ordering::Less => format!("({})", lhs_repr_raw),
                         Ordering::Equal | Ordering::Greater => lhs_repr_raw,
                     },
@@ -192,7 +192,7 @@ impl ExpBTree {
                 let (rhs_repr_raw, rhs_op) = rhs.to_infix_string_impl();
                 let rhs_repr = match rhs_op {
                     None => rhs_repr_raw,
-                    Some(rhs_op) => match op.cmp(&rhs_op) {
+                    Some(rhs_op) => match rhs_op.cmp(op) {
                         Ordering::Less | Ordering::Equal => format!("({})", rhs_repr_raw),
                         Ordering::Greater => rhs_repr_raw,
                     },
