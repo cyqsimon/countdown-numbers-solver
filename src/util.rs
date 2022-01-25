@@ -1,3 +1,5 @@
+//! This module contains miscellaneous utility structs and functions.
+
 use std::{cmp::Ordering, fmt};
 
 use itertools::Itertools;

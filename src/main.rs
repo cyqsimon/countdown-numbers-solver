@@ -2,6 +2,7 @@ mod compute;
 mod util;
 
 use clap::Parser;
+use itertools::Itertools;
 
 use crate::{
     compute::{calc_postfix_sequences_all, calc_postfix_sequences_first},
@@ -51,16 +52,17 @@ fn main() {
             0 => println!("No solution found"),
             n => {
                 println!("{} solutions found", n);
-                solutions.into_iter().for_each(|solution| {
-                    println!(
-                        "  - {}",
+                solutions
+                    .into_iter()
+                    .map(|solution| {
                         if postfix {
                             postfix_print(&solution)
                         } else {
                             infix_print(&solution).unwrap() // solution is always valid
                         }
-                    )
-                });
+                    })
+                    .sorted()
+                    .for_each(|repr| println!(" - {}", repr));
             }
         };
     } else {

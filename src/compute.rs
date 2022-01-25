@@ -1,3 +1,5 @@
+//! This module contains the solver algorithm.
+
 use std::collections::HashSet;
 
 use strum::IntoEnumIterator;
@@ -67,7 +69,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
             let operand0 = stack.pop()?;
             match op {
                 Op::Add => {
-                    // use ordering to eliminate some commutative duplications
+                    // use ordering to eliminate some (not all) commutative duplications
                     if operand0 < operand1 {
                         None
                     } else {
@@ -86,7 +88,7 @@ fn try_apply_sensible(mut stack: Vec<u32>, token: Token) -> Option<Vec<u32>> {
                 }
                 Op::Mul => {
                     // multiply by 1 is not helpful
-                    // use ordering to eliminate some commutative duplications
+                    // use ordering to eliminate some (not all) commutative duplications
                     if operand0 == 1 || operand1 == 1 || operand0 < operand1 {
                         None
                     } else {
